@@ -22,8 +22,6 @@ export async function POST(request: Request) {
       where: { email: validatedData.email }
     })
 
-    console.log('User found:', user ? 'Yes' : 'No')
-
     if (!user) {
       return NextResponse.json(
         { error: 'Invalid credentials' },
@@ -33,8 +31,7 @@ export async function POST(request: Request) {
 
     // Verify password
     const isValid = await verifyPassword(validatedData.password, user.password)
-    console.log('Password valid:', isValid)
-
+    
     if (!isValid) {
       return NextResponse.json(
         { error: 'Invalid credentials' },
@@ -43,11 +40,14 @@ export async function POST(request: Request) {
     }
 
     // Generate token
-    const token = generateToken(user)
-
-    // Create response
+    const token = await generateToken(user)
     const { password: _, ...userWithoutPassword } = user
-    const response = NextResponse.json({ user: userWithoutPassword })
+    
+    // Create response
+    const response = NextResponse.json({ 
+      user: userWithoutPassword,
+      success: true 
+    })
 
     // Set cookie
     response.cookies.set('auth-token', token, {

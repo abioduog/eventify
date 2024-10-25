@@ -4,7 +4,8 @@ import { verifyToken } from './auth-utils'
 
 export async function getCurrentUser() {
   try {
-    const token = cookies().get('auth-token')?.value
+    const cookieStore = cookies()
+    const token = cookieStore.get('auth-token')?.value
     
     if (!token) {
       return null

@@ -16,24 +16,17 @@ export async function middleware(request: NextRequest) {
     const payload = token ? await verifyToken(token) : null
     const isAuthenticated = !!payload
 
+    // Redirect authenticated users away from auth pages
     if (isAuthenticated && isAuthPath) {
       const redirectPath = getRoleRedirectPath(payload.role as string)
       return NextResponse.redirect(new URL(redirectPath, request.url))
     }
 
+    // Redirect unauthenticated users to login
     if (!isAuthenticated && isProtectedPath) {
       const loginUrl = new URL('/auth/login', request.url)
       loginUrl.searchParams.set('callbackUrl', path)
       return NextResponse.redirect(loginUrl)
-    }
-
-    if (isAuthenticated && isProtectedPath) {
-      const userRole = payload.role as string
-      const allowedPath = getRoleRedirectPath(userRole)
-      
-      if (!path.startsWith(allowedPath)) {
-        return NextResponse.redirect(new URL(allowedPath, request.url))
-      }
     }
 
     return NextResponse.next()
