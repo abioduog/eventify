@@ -1,0 +1,9 @@
+{
+    "name": "Eventify",
+    "short_name": "Eventify",
+    "display": "standalone",
+    "start_url": "/",
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff",
+    "icons": []
+  }

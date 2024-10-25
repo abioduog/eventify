@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ORGANIZER
+  ADMIN
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
+model User {
+  id              String    @id @default(cuid())
+  name            String
+  email           String    @unique
+  password        String
+  role            Role      @default(USER)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  organizedEvents Event[]   @relation("OrganizedEvents")
+  tickets         Ticket[]
+  profile         Profile?
+}
+
+model Profile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  bio       String?
+  avatar    String?
+  phone     String?
+  website   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Event {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  date        DateTime
+  endDate     DateTime?
+  location    String
+  price       Float
+  category    String
+  image       String
+  status      EventStatus @default(DRAFT)
+  capacity    Int
+  organizerId String
+  organizer   User        @relation("OrganizedEvents", fields: [organizerId], references: [id])
+  venue       Venue       @relation(fields: [venueId], references: [id])
+  venueId     String
+  ticketTypes TicketType[]
+  tickets     Ticket[]
+  schedule    Schedule[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([organizerId])
+  @@index([venueId])
+}
+
+model Schedule {
+  id          String   @id @default(cuid())
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id])
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  speaker     String?
+  location    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([eventId])
+}
+
+model Venue {
+  id          String   @id @default(cuid())
+  name        String
+  address     String
+  city        String
+  state       String
+  zip         String
+  capacity    Int
+  description String?
+  amenities   String[] @default([])
+  events      Event[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TicketType {
+  id          String   @id @default(cuid())
+  name        String
+  price       Float
+  description String
+  available   Int
+  benefits    String[]
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id])
+  tickets     Ticket[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([eventId])
+}
+
+model Ticket {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation(fields: [userId], references: [id])
+  eventId      String
+  event        Event      @relation(fields: [eventId], references: [id])
+  ticketTypeId String
+  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id])
+  status       String     @default("ACTIVE")
+  qrCode       String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([userId])
+  @@index([eventId])
+  @@index([ticketTypeId])
+}

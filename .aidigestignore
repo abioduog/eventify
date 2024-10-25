@@ -1,0 +1,18 @@
+# Exclude build and dependency directories
+.next/
+node_modules/
+
+# Exclude specific configuration files
+.eslintrc.json
+.gitignore
+components.json
+next.config.js
+postcss.config.mjs
+tailwind.config.ts
+tsconfig.json
+
+# Exclude miscellaneous files
+README.md
+
+# Exclude any other unwanted files or patterns
+*.log
