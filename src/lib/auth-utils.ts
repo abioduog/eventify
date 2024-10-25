@@ -27,25 +27,30 @@ export async function verifyPassword(
   }
 }
 
-export async function generateToken(user: any): Promise<string> {
+export async function generateToken(user: any) {
   try {
-    return await new SignJWT({ 
+    const token = await new SignJWT({
       id: user.id,
       email: user.email,
-      role: user.role 
+      role: user.role
     })
       .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
       .setExpirationTime('7d')
       .sign(JWT_SECRET)
+    
+    return token
   } catch (error) {
     console.error('Token generation error:', error)
-    throw new Error('Token generation failed')
+    throw new Error('Failed to generate token')
   }
 }
 
 export async function verifyToken(token: string) {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET)
+    const { payload } = await jwtVerify(token, JWT_SECRET, {
+      algorithms: ['HS256']
+    })
     return payload
   } catch (error) {
     console.error('Token verification error:', error)
