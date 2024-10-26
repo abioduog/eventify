@@ -1,145 +1,287 @@
-Here's a comprehensive README.md for the Eventify project:
+# Eventify - Event Management Platform
 
-```markdown
-# Eventify
+## Overview
 
-Eventify is a modern event management platform built with Next.js, TypeScript, and Tailwind CSS. It provides a seamless experience for creating, managing, and attending events.
+Eventify is a comprehensive event management platform built with Next.js, TypeScript, and Prisma. The platform connects event organizers, service providers, and attendees through a modern, feature-rich interface.
 
 ## Features
 
-- 🌓 Dark/Light mode support
-- 🎨 Modern UI with shadcn/ui components
-- 📱 Responsive design
-- 🔒 Type-safe development with TypeScript
-- 🎯 SEO optimized
-- 🚀 Fast performance
+### User Management
+- Multi-role authentication system (Admin, Organizer, Service Provider, Attendee)
+- JWT-based authentication with secure cookie storage
+- Protected routes based on user roles
+- User profile management
+- Password hashing and security measures
 
-## Tech Stack
+### Event Management
+- Create and manage events with detailed information
+- Multiple ticket types with pricing
+- Event scheduling and timeline
+- Venue management
+- Image handling and display
+- Rich event descriptions and categories
 
-- **Framework**: Next.js 15.0
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui
-- **Theme Management**: next-themes
-- **Form Handling**: react-hook-form with zod validation
-- **Icons**: Lucide React
+### Dashboard Features
+- Role-specific dashboards (Organizer, Admin, Service Provider)
+- Event analytics and statistics
+- Ticket sales tracking
+- Revenue monitoring
+- User management tools
 
-## Getting Started
+### Search and Discovery
+- Advanced event search functionality
+- Category-based filtering
+- Price range filtering
+- Location-based search
+- Dynamic search results
 
-### Prerequisites
+### Design and UI
+- Responsive design for all screen sizes
+- Dark/Light theme support
+- Modern UI components using shadcn/ui
+- Consistent styling with Tailwind CSS
+- Loading states and animations
 
-- Node.js 18+ 
-- npm, yarn, or pnpm
+## Technical Stack
 
-### Installation
+### Frontend
+- Next.js 15.0.1
+- TypeScript
+- Tailwind CSS
+- shadcn/ui components
+- React Context for state management
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/eventify.git
-cd eventify
-```
+### Backend
+- Next.js API routes
+- Prisma ORM
+- PostgreSQL database
+- JWT authentication using jose
+- Zod for validation
 
-2. Install dependencies:
-
-```bash
-npm install
-# or
-yarn install
-# or
-pnpm install
-```
-
-3. Create a `.env` file in the root directory and add necessary environment variables:
-
-```bash
-NEXT_PUBLIC_API_URL=your_api_url_here
-```
-
-4. Start the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
-
-5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development Tools
+- ESLint for code quality
+- Prettier for code formatting
+- TypeScript for type safety
+- Docker for database containerization
 
 ## Project Structure
 
 ```
-eventify/
-├── .next/
-├── node_modules/
-├── public/
-│   ├── manifest.json
-│   └── service-worker.js
-├── src/
-│   ├── app/
-│   │   ├── globals.css
-│   │   ├── layout.tsx
-│   │   └── page.tsx
-│   ├── components/
-│   │   ├── theme-provider.tsx
-│   │   └── ui/
-│   │       ├── button.tsx
-│   │       ├── header.tsx
-│   │       └── theme-toggle.tsx
-│   └── lib/
-│       └── utils.ts
-├── .eslintrc.json
-├── .gitignore
-├── components.json
-├── next.config.js
-├── package.json
-├── postcss.config.mjs
-├── README.md
-├── tailwind.config.ts
-└── tsconfig.json
+src/
+├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   ├── auth/              # Authentication pages
+│   ├── dashboard/         # Dashboard pages
+│   └── events/            # Event pages
+├── components/            # React components
+│   ├── ui/               # Reusable UI components
+│   └── events/           # Event-specific components
+├── context/              # React context providers
+├── hooks/                # Custom React hooks
+├── lib/                  # Utility functions
+└── types/                # TypeScript type definitions
 ```
 
-## Available Scripts
+## Setup Instructions
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
+### Prerequisites
+- Node.js 18 or higher
+- Docker and Docker Compose
+- PostgreSQL (via Docker)
+- npm or yarn
 
-## Customization
+### Environment Setup
 
-### Theme
-
-The project uses a custom theme system with CSS variables. You can modify the theme colors in:
-
-```typescript:src/app/globals.css
-startLine: 9
-endLine: 63
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd eventify
 ```
 
-### Components
+2. Create a `.env.local` file:
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/eventify"
+JWT_SECRET="your-development-secret"
+NEXTAUTH_URL="http://localhost:3000"
+```
 
-UI components are built using shadcn/ui and can be customized in the `src/components/ui` directory.
+3. Install dependencies:
+```bash
+npm install
+```
+
+4. Start the database:
+```bash
+docker-compose up -d
+```
+
+5. Run database migrations:
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+6. Seed the database:
+```bash
+npm run seed
+```
+
+7. Start the development server:
+```bash
+npm run dev
+```
+
+### Default User Accounts
+
+After seeding the database, you can use these accounts:
+
+```
+Admin User:
+Email: admin@eventify.com
+Password: admin123
+
+Event Organizer:
+Email: organizer@eventify.com
+Password: organizer123
+```
+
+## API Routes
+
+### Authentication
+- `POST /api/auth/login` - User login
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/logout` - User logout
+- `GET /api/auth/me` - Get current user
+
+### Events
+- `GET /api/events` - List events
+- `POST /api/events` - Create event
+- `GET /api/events/[id]` - Get event details
+- `PUT /api/events/[id]` - Update event
+- `DELETE /api/events/[id]` - Delete event
+
+### Dashboard
+- `GET /api/dashboard/stats` - Get dashboard statistics
+- `GET /api/dashboard/events` - Get organizer's events
+- `POST /api/dashboard/events` - Create new event
+
+## User Roles and Permissions
+
+### Admin
+- Access to admin dashboard
+- Manage all users
+- Manage all events
+- System configuration
+
+### Event Organizer
+- Create and manage events
+- Access to organizer dashboard
+- View event statistics
+- Manage ticket types
+
+### Service Provider
+- Create service listings
+- Manage bookings
+- Update availability
+- View provider dashboard
+
+### Attendee
+- Browse events
+- Purchase tickets
+- View purchased tickets
+- Update profile
+
+## Development Guidelines
+
+### Code Style
+- Use TypeScript for type safety
+- Follow ESLint rules
+- Use Prettier for formatting
+- Follow component organization structure
+
+### Component Creation
+- Create reusable components in `components/ui`
+- Use Tailwind CSS for styling
+- Implement proper loading states
+- Add proper TypeScript types
+
+### API Development
+- Use Next.js API routes
+- Implement proper error handling
+- Validate requests using Zod
+- Follow RESTful conventions
+
+## Deployment
+
+### Production Requirements
+- PostgreSQL database
+- Node.js hosting environment
+- Environment variables configuration
+- SSL certificate for security
+
+### Deployment Steps
+1. Build the application:
+```bash
+npm run build
+```
+
+2. Set production environment variables
+3. Run database migrations
+4. Start the production server:
+```bash
+npm start
+```
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## Testing
+
+### Unit Tests
+```bash
+npm run test
+```
+
+### E2E Tests
+```bash
+npm run test:e2e
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. Database Connection
+- Verify PostgreSQL is running
+- Check DATABASE_URL
+- Ensure database exists
+
+2. Authentication Issues
+- Verify JWT_SECRET is set
+- Check cookie settings
+- Confirm user roles
+
+3. Development Server
+- Clear `.next` cache
+- Verify node modules
+- Check port availability
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT License - See LICENSE file for details
+
+## Support
+
+For support, please open an issue in the repository or contact the maintainers.
 
 ## Acknowledgments
 
-- [Next.js](https://nextjs.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [shadcn/ui](https://ui.shadcn.com/)
-
-```
-
-This README provides a comprehensive overview of the project, its features, setup instructions, and customization options, while maintaining the existing project structure and configuration.
+- Next.js team for the framework
+- Vercel for hosting solutions
+- shadcn for UI components
+- Contributors and maintainers
